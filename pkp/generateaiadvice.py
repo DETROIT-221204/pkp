@@ -3,7 +3,7 @@ def generate_ai_advice(company):
     """Handles the OpenRouter API logic and returns formatted AI advice."""
 
 
-    API_KEY = "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"
+    API_KEY = ""
 
     if not company:
         return "⚠️ Please provide a valid company name."
@@ -49,3 +49,4 @@ def generate_ai_advice(company):
     )
 
     return message.strip() or "⚠️ No response from AI."
+
