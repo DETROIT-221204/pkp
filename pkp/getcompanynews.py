@@ -100,3 +100,4 @@ def get_company_news(company):
         "summary": sentiment_summary,
         "headlines": headlines
     }
+

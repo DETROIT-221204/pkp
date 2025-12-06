@@ -32,7 +32,7 @@ from realestateinsight import get_real_estate_insight
 from compareassets import process_compare_assets
 from mutualfunds import process_mutual_fund
 app = Flask(__name__)
-app.secret_key = "super-secret-key"   # change this in production
+app.secret_key = ""   # change this in production
 
 API_KEY = ""  #DEEPSEEK
 
@@ -349,7 +349,7 @@ def compare_assets():
     )
 
 # ✅ Replace with your actual API key
-OPENROUTER_API_KEY = "
+OPENROUTER_API_KEY = ""
 
 @app.route("/Ai-Assistant")
 def Assistant():
@@ -732,6 +732,4 @@ def personalizedadvice():
 
 if __name__ == '__main__':
 
-
     app.run(debug=True)
-

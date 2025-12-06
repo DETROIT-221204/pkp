@@ -49,4 +49,3 @@ def generate_ai_advice(company):
     )
 
     return message.strip() or "⚠️ No response from AI."
-
