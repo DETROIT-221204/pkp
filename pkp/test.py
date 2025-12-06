@@ -34,7 +34,7 @@ from mutualfunds import process_mutual_fund
 app = Flask(__name__)
 app.secret_key = "super-secret-key"   # change this in production
 
-API_KEY = "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"  #DEEPSEEK
+API_KEY = ""  #DEEPSEEK
 
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
@@ -349,7 +349,7 @@ def compare_assets():
     )
 
 # ✅ Replace with your actual API key
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "
 
 @app.route("/Ai-Assistant")
 def Assistant():
@@ -731,5 +731,6 @@ def personalizedadvice():
     #                        end_date_display=end_date_str_display)
 
 if __name__ == '__main__':
+
 
     app.run(debug=True)
