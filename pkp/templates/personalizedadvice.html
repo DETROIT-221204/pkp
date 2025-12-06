@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Get Personalized Investment Advice</title>
+    <style>
+         :root {
+            --primary-bg: #0a0a1a;
+            --secondary-bg: #1a1a2e;
+            --accent: #9c27b0;
+            --accent-hover: #e91e63;
+            --text: #e0e0e0;
+        }
+
+        body {
+            background: var(--primary-bg);
+            color: var(--text);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 2rem;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(45deg, #9c27b0, #e91e63);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        h2::after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, #9c27b0, #e91e63);
+            margin: 0.8rem auto 0;
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(156, 39, 176, 0.6);
+        }
+        /* Card box */
+
+        .card-box {
+            background: var(--secondary-bg);
+            border: 1px solid rgba(156, 39, 176, 0.3);
+            border-radius: 14px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .card-box.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(156, 39, 176, 0.3);
+        }
+
+        .card-box h3 {
+            margin-bottom: 1.5rem;
+            color: var(--accent-hover);
+            font-size: 1.3rem;
+            text-align: center;
+        }
+        /* Form field styling */
+
+        .form-field {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .form-field label {
+            display: block;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+        /* Button-style checkboxes */
+
+        .btn-check {
+            display: none;
+        }
+
+        .btn-label {
+            padding: 12px 24px;
+            border: 2px solid var(--accent);
+            border-radius: 25px;
+            cursor: pointer;
+            background: transparent;
+            color: var(--accent);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-size: 0.95rem;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .btn-check:checked+.btn-label {
+            background: linear-gradient(45deg, #9c27b0, #e91e63);
+            color: white;
+            border-color: var(--accent-hover);
+            box-shadow: 0 4px 10px rgba(156, 39, 176, 0.5);
+            transform: scale(1.05);
+        }
+        /* Submit button */
+
+        .submit-container {
+            text-align: center;
+            margin: 2rem 0;
+            display: none;
+        }
+
+        button {
+            padding: 1rem 3rem;
+            background: linear-gradient(45deg, #9c27b0, #e91e63);
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.4s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(233, 30, 99, 0.5);
+        }
+        /* Results section */
+
+        .results-section {
+            margin-top: 3rem;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .results-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Summary card */
+
+        .summary-card {
+            background: #1c1c2e;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+            text-align: center;
+        }
+
+        .summary-card h4 {
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+
+        .summary-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .summary-card li {
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+        }
+        /* Recommendation sections */
+
+        .recommendation-section-header {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 2rem 0 1.5rem 0;
+            text-align: center;
+            border-bottom: 2px solid rgba(156, 39, 176, 0.5);
+            padding-bottom: 0.8rem;
+        }
+
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            justify-items: center;
+        }
+
+        .recommendation-card {
+            background: #1c1c3a;
+            border: 1px solid rgba(233, 30, 99, 0.4);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            width: 100%;
+            max-width: 220px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 120px;
+        }
+
+        .recommendation-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(233, 30, 99, 0.4);
+        }
+
+        .recommendation-card .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .recommendation-card .explore-btn {
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(90deg, #e91e63, #9c27b0);
+            border: none;
+            border-radius: 25px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            margin-top: auto;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .recommendation-card .explore-btn:hover {
+            background: linear-gradient(90deg, #ff4081, #d130d1);
+            box-shadow: 0 4px 10px rgba(233, 30, 99, 0.6);
+            transform: scale(1.02);
+        }
+
+        .no-results {
+            background: #1c1c2e;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            color: var(--text);
+            font-style: italic;
+            margin-bottom: 2rem;
+        }
+        /* Animations */
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* Responsive design */
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            h2 {
+                font-size: 2rem;
+                margin-bottom: 2rem;
+            }
+            .card-box {
+                padding: 1.5rem;
+            }
+            .options-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .btn-label {
+                width: 200px;
+            }
+            .recommendations-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>💡 Get Personalized Investment Advice</h2>
+
+        <form method="POST" action="/personalizedadvice" id="investmentForm">
+            <!-- Investment Amount Field -->
+            <div class="card-box visible" id="amountCard">
+                <h3>Your Investment Preferences</h3>
+                <div class="form-field">
+                    <label>💰 How much do you want to invest?</label>
+                    <div class="options-container">
+                        <input type="radio" class="btn-check" id="invest-low" name="investment_amount" value="low" required>
+                        <label for="invest-low" class="btn-label">Low (₹0 – ₹50,000)</label>
+
+                        <input type="radio" class="btn-check" id="invest-medium" name="investment_amount" value="medium">
+                        <label for="invest-medium" class="btn-label">Medium (₹50,000 – ₹5,00,000)</label>
+
+                        <input type="radio" class="btn-check" id="invest-high" name="investment_amount" value="high">
+                        <label for="invest-high" class="btn-label">High (₹5,00,000+)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Investment Duration Field -->
+            <div class="card-box" id="durationCard">
+                <div class="form-field">
+                    <label>📅 Investment Duration</label>
+                    <div class="options-container">
+                        <input type="radio" class="btn-check" id="duration-short" name="investment_duration" value="short_term" required>
+                        <label for="duration-short" class="btn-label">Short Term (0–1 year)</label>
+
+                        <input type="radio" class="btn-check" id="duration-medium" name="investment_duration" value="medium_term">
+                        <label for="duration-medium" class="btn-label">Medium Term (1–5 years)</label>
+
+                        <input type="radio" class="btn-check" id="duration-long" name="investment_duration" value="long_term">
+                        <label for="duration-long" class="btn-label">Long Term (5+ years)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Tolerance Field -->
+            <div class="card-box" id="riskCard">
+                <div class="form-field">
+                    <label>⚖ Risk Tolerance</label>
+                    <div class="options-container">
+                        <input type="radio" class="btn-check" id="low" name="risk_tolerance" value="low" required>
+                        <label for="low" class="btn-label">Low</label>
+
+                        <input type="radio" class="btn-check" id="medium" name="risk_tolerance" value="medium">
+                        <label for="medium" class="btn-label">Medium</label>
+
+                        <input type="radio" class="btn-check" id="high" name="risk_tolerance" value="high">
+                        <label for="high" class="btn-label">High</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interest Selection Field -->
+            <div class="card-box" id="interestCard">
+                <h3>Select Your Interests</h3>
+                <div class="form-field">
+                    <div class="options-container">
+                        <input type="checkbox" id="stocks" class="btn-check" name="assets" value="stocks">
+                        <label for="stocks" class="btn-label">Stocks</label>
+
+                        <input type="checkbox" id="real_estate" class="btn-check" name="assets" value="real_estate">
+                        <label for="real_estate" class="btn-label">Real Estate</label>
+
+                        <input type="checkbox" id="gold" class="btn-check" name="assets" value="gold">
+                        <label for="gold" class="btn-label">Gold</label>
+
+                        <input type="checkbox" id="crypto" class="btn-check" name="assets" value="crypto">
+                        <label for="crypto" class="btn-label">Crypto</label>
+
+                        <input type="checkbox" id="mutual_funds" class="btn-check" name="assets" value="mutual_funds">
+                        <label for="mutual_funds" class="btn-label">Mutual Funds</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="submit-container" id="submitContainer">
+                <button type="submit">✨ Get My Advice</button>
+            </div>
+        </form>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection">
+            {% if summary %}
+            <div class="summary-card">
+                <h4>📊 Investment Return Summary</h4>
+                <ul>
+                    <li><strong>Gold:</strong> {{ summary.Gold if summary.Gold else "Not Selected" }}</li>
+                    <li><strong>Real Estate:</strong> {{ summary['Real Estate'] if summary['Real Estate'] else "Not Selected" }}</li>
+                    <li><strong>Stocks:</strong> {{ summary.Stocks if summary.Stocks else "Not Selected" }}</li>
+                    <li><strong>Crypto:</strong> {{ summary.Crypto if summary.Crypto else "Not Selected" }}</li>
+                </ul>
+            </div>
+            {% endif %} {% if filtered %}
+            <h3 class="recommendation-section-header">📈 Recommended Stocks:</h3>
+            <div class="recommendations-grid">
+                {% for stock in filtered %}
+                <div class="recommendation-card">
+                    <h5 class="card-title" title="{{ stock }}">{{ stock }}</h5>
+                    <a href="{{ url_for('index', company=stock) }}" class="explore-btn">Explore</a>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %} {% if filtered_mutualfundsnames %}
+            <h3 class="recommendation-section-header">💼 Recommended Mutual Funds:</h3>
+            <div class="recommendations-grid">
+                {% for mf in filtered_mutualfundsnames %}
+                <div class="recommendation-card">
+                    <h5 class="card-title" title="{{ mf|e }}">{{ mf }}</h5>
+                    <a href="{{ url_for('fundanalysis', fund_name=mf) }}" class="explore-btn">Explore</a>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %} {% if gold %}
+            <h3 class="recommendation-section-header">🥇 Gold (Highly Recommended)</h3>
+            <div class="recommendations-grid">
+                {% for gold_item in gold %}
+                <div class="recommendation-card">
+                    <h5 class="card-title" title="{{ gold_item|e }}">{{ gold_item }}</h5>
+                    <a href="{{ url_for('gold') }}" class="explore-btn">Explore</a>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %} {% if not filtered and not filtered_mutualfundsnames and not gold %}
+            <div class="no-results">
+                <p>No recommendations available at this time.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Progressive form reveal functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const amountCard = document.getElementById('amountCard');
+            const durationCard = document.getElementById('durationCard');
+            const riskCard = document.getElementById('riskCard');
+            const interestCard = document.getElementById('interestCard');
+            const submitContainer = document.getElementById('submitContainer');
+            const resultsSection = document.getElementById('resultsSection');
+
+            // Show duration field when amount is selected
+            const amountInputs = document.querySelectorAll('input[name="investment_amount"]');
+            amountInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    if (this.checked) {
+                        setTimeout(() => {
+                            durationCard.classList.add('visible');
+                        }, 300);
+                    }
+                });
+            });
+
+            // Show risk field when duration is selected
+            const durationInputs = document.querySelectorAll('input[name="investment_duration"]');
+            durationInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    if (this.checked) {
+                        setTimeout(() => {
+                            riskCard.classList.add('visible');
+                        }, 300);
+                    }
+                });
+            });
+
+            // Show interest field and submit button when risk is selected
+            const riskInputs = document.querySelectorAll('input[name="risk_tolerance"]');
+            riskInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    if (this.checked) {
+                        setTimeout(() => {
+                            interestCard.classList.add('visible');
+                            submitContainer.style.display = 'block';
+                        }, 300);
+                    }
+                });
+            });
+
+            // Show results section if there are results
+            if (resultsSection.children.length > 0) {
+                resultsSection.classList.add('visible');
+            }
+        });
+    </script>
+</body>
+
+</html>

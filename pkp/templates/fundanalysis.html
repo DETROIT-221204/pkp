@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ fund_name }} Analysis</title>
+    <style>
+        body {
+            background: #0a0a1a;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+
+        h2, h4 {
+            color: #e91e63;
+        }
+
+        .returns-container {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .return-card {
+            background: #1a1a2e;
+            border: 1px solid rgba(156, 39, 176, 0.4);
+            border-radius: 12px;
+            padding: 15px 20px;
+            flex: 1;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .return-card h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #9c27b0;
+        }
+
+        .return-card p {
+            margin: 8px 0 0;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        table {
+            background: #1a1a2e;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .news-section a {
+            color: #ff4d4d;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        /* Floating AI Advice Button */
+        .ai-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #e91e63;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            transition: background 0.3s;
+        }
+
+        .ai-button:hover {
+            background: #c2185b;
+        }
+    </style>
+</head>
+<body>
+    <h2>{{ fund_name }}</h2>
+
+    <!-- Return Cards -->
+    <div class="returns-container">
+        <div class="return-card">
+            <h3>Total Return</h3>
+            <p>{{ total_return }}%</p>
+        </div>
+        <div class="return-card">
+            <h3>1-Year Return</h3>
+            <p>{{ return_summary['1_year'] if return_summary['1_year'] else 'N/A' }}%</p>
+        </div>
+        <div class="return-card">
+            <h3>5-Year Return</h3>
+            <p>{{ return_summary['5_year'] if return_summary['5_year'] else 'N/A' }}%</p>
+        </div>
+        <div class="return-card">
+            <h3>10-Year Return</h3>
+            <p>{{ return_summary['10_year'] if return_summary['10_year'] else 'N/A' }}%</p>
+        </div>
+    </div>
+
+    <!-- Sample Data -->
+    {% if fund_data %}
+      <h4>Sample Data (First 10 Rows)</h4>
+      <div>{{ fund_data|safe }}</div>
+    {% endif %}
+
+    <!-- Chart -->
+    {% if fig_html %}
+      <h4>Performance Chart</h4>
+      <div>{{ fig_html|safe }}</div>
+    {% endif %}
+
+    <!-- Related News -->
+    {% if news %}
+      <div class="news-section">
+          <h4>Related News</h4>
+          <ul>
+            {% for item in news %}
+              <li><a href="{{ item.url }}" target="_blank">{{ item.title }}</a></li>
+            {% endfor %}
+          </ul>
+      </div>
+    {% endif %}
+
+   <!-- Floating AI Advice Button -->
+<button class="ai-button" onclick="generateAdvice('{{ fund_name }}')">
+  🤖 Get AI Advice
+</button>
+
+<!-- Section to display AI advice -->
+<div id="ai-advice-section" style="display:none; margin-top:20px; background:#1a1a2e; padding:15px; border-radius:8px;">
+    <div id="ai-advice-text">Loading...</div>
+</div>
+
+<!-- Include Markdown renderer -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script>
+function generateAdvice(fund_name) {
+    const section = document.getElementById("ai-advice-section");
+    const text = document.getElementById("ai-advice-text");
+    section.style.display = "block";
+    text.innerHTML = "⏳ Fetching AI advice...";
+
+    fetch("/get_ai_advice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ company: fund_name })  // <-- send fund_name here
+    })
+    .then(response => response.json())
+    .then(data => {
+        text.innerHTML = marked.parse(data.reply);
+    })
+    .catch(err => {
+        console.error(err);
+        text.innerHTML = "⚠️ Failed to get advice.";
+    });
+}
+</script>
+</body>
+</html>

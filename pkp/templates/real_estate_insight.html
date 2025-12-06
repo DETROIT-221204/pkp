@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ location }} - Real Estate Insight</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    :root {
+      --primary-bg: #0a0a1a;
+      --secondary-bg: #1a1a2e;
+      --accent: #9c27b0;
+      --accent-hover: #e91e63;
+      --text: #e0e0e0;
+    }
+
+    body {
+      background: var(--primary-bg);
+      color: var(--text);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: rgba(26, 26, 46, 0.9);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(156, 39, 176, 0.3);
+      padding: 15px 25px;
+      font-size: 1.5rem;
+      font-weight: 600;
+      background-clip: text;
+      color: var(--accent-hover);
+    }
+
+    /* Container */
+    .container {
+      margin: 40px auto;
+      max-width: 1100px;
+    }
+
+    /* Section Titles */
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 40px 0 15px;
+      background: linear-gradient(45deg, var(--accent), var(--accent-hover));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Insights */
+    .insight {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: lightgreen;
+      background: rgba(26, 26, 46, 0.6);
+      padding: 12px 18px;
+      border-left: 4px solid var(--accent);
+      border-radius: 10px;
+    }
+
+    /* Advice Card */
+    .advice {
+      margin-top: 20px;
+      font-size: 1.05rem;
+      background: linear-gradient(160deg, rgba(26,26,46,0.9), rgba(15,15,30,0.7));
+      padding: 18px 20px;
+      border-left: 4px solid var(--accent-hover);
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Explore Button */
+    .explore {
+      margin-top: 30px;
+    }
+
+    .explore a {
+      position: relative;
+      display: inline-block;
+      padding: 12px 24px;
+      font-weight: 600;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 10px;
+      color: var(--text);
+      background: transparent;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .explore a::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: calc(100% + 8px);
+      height: calc(100% + 6px);
+      border-radius: 12px;
+      background: linear-gradient(45deg, var(--accent), var(--accent-hover));
+      z-index: -2;
+      transition: all 0.5s ease;
+    }
+
+    .explore a::after {
+      content: "";
+      position: absolute;
+      inset: 2px;
+      background: var(--primary-bg);
+      border-radius: 8px;
+      z-index: -1;
+    }
+
+    .explore a:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 15px rgba(233, 30, 99, 0.6);
+    }
+
+    .explore a:hover::before {
+      transform: rotate(180deg);
+      filter: blur(6px);
+    }
+
+    /* Chart Data Table */
+    .chart-data {
+      margin-top: 30px;
+      background: linear-gradient(180deg, rgba(26,26,46,0.85), rgba(15,15,30,0.7));
+      padding: 18px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+      max-height: 350px;
+      overflow-y: auto;
+    }
+
+    .chart-data table {
+      width: 100%;
+      border-collapse: collapse;
+      color: var(--text);
+    }
+
+    .chart-data th, .chart-data td {
+      padding: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+    }
+
+    .chart-data th {
+      background: rgba(156, 39, 176, 0.2);
+      color: var(--accent-hover);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <div class="navbar">
+    <i class="fas fa-map-marker-alt"></i> Real Estate Insights — {{ location }}
+  </div>
+
+  <!-- Content -->
+  <div class="container">
+    <!-- Historical Chart -->
+    <div class="section-title">📈 Historical Price Trend</div>
+    {{ graph_div | safe }}
+
+    {% if return_percentage %}
+    <div class="insight">
+      Return Percentage: <strong>{{ return_percentage }}%</strong> (Past Decade)
+    </div>
+    {% endif %}
+
+    {% if latest_yield %}
+    <div class="insight">
+      Monthly Rental Yield: <strong>{{ latest_yield }} ₹/sq.ft</strong>
+    </div>
+    {% endif %}
+
+    {% if advice %}
+    <div class="advice">
+      <strong>Investment Advice:</strong><br>
+      {{ advice }}
+    </div>
+    {% endif %}
+
+    {% if future_graph_div %}
+    <div class="section-title">🔮 Forecasted Prices (After 2025)</div>
+    {{ future_graph_div | safe }}
+    {% endif %}
+
+    {% if link %}
+    <div class="explore">
+      <a href="{{ link }}" target="_blank">🔗 Explore Real Estate in {{ location }}</a>
+    </div>
+    {% endif %}
+
+    {% if table %}
+    <div class="section-title">📊 Data Breakdown</div>
+    <div class="chart-data">
+      {{ table | safe }}
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>

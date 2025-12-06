@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="{{ get_locale() }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ gettext("Dashboard") }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #0a0a1a; color: #e0e0e0; }
+        .toggle-container {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 20px; padding: 10px;
+        }
+        .toggle-label { font-size: 16px; }
+        .toggle-switch {
+            position: relative; display: inline-block; width: 50px; height: 25px;
+        }
+        .toggle-switch input { display: none; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .4s; border-radius: 25px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 19px; width: 19px; left: 3px; bottom: 3px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: #9c27b0; }
+        input:checked + .slider:before { transform: translateX(24px); }
+    </style>
+</head>
+<body>
+    <h1>{{ gettext("Tech Alegria Dashboard") }}</h1>
+
+    <!-- Language Toggle -->
+    <div class="toggle-container">
+        <span class="toggle-label">English</span>
+        <label class="toggle-switch">
+            <input type="checkbox" id="langToggle" {% if get_locale() == "hi" %}checked{% endif %}>
+            <span class="slider"></span>
+        </label>
+        <span class="toggle-label">हिंदी</span>
+    </div>
+<h1>hello</h1>
+    <!-- Charts -->
+    <div>{{ fig1_html|safe }}</div>
+    <div>{{ fig2_html|safe }}</div>
+
+    <script>
+        document.getElementById("langToggle").addEventListener("change", function() {
+            const newLang = this.checked ? "hi" : "en";
+            const params = new URLSearchParams(window.location.search);
+            params.set("lang", newLang);
+            window.location.search = params.toString();
+        });
+    </script>
+</body>
+</html>

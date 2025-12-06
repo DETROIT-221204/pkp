@@ -1,0 +1,45 @@
+<!-- templates/chat.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Investment Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body { font-family: Arial; background-color: #f4f4f4; padding: 20px; }
+        #chatbox { width: 100%; max-width: 600px; margin: auto; }
+        .message { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .user { background-color: #d1e7dd; text-align: right; }
+        .bot { background-color: #f8d7da; text-align: left; }
+    </style>
+</head>
+<body>
+    <div id="chatbox">
+        <h2>Ask Your Investment Questions</h2>
+        <div id="messages"></div>
+        <input type="text" id="userInput" placeholder="Ask something..." style="width: 80%;">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const input = document.getElementById("userInput");
+            const msg = input.value;
+            if (!msg) return;
+
+            const messageContainer = document.getElementById("messages");
+            messageContainer.innerHTML += `<div class="message user">${msg}</div>`;
+            input.value = '';
+
+            fetch('/ask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: msg })
+            })
+            .then(res => res.json())
+            .then(data => {
+                messageContainer.innerHTML += `<div class="message bot">${data.reply}</div>`;
+            });
+        }
+    </script>
+</body>
+</html>

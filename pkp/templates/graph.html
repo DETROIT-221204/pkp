@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock Data for {{ company }}</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+  <style>
+    :root {
+      --primary-bg: #0a0a1a;
+      --secondary-bg: #1a1a2e;
+      --accent: #9c27b0;
+      --accent-hover: #e91e63;
+      --success: #28a745;
+      --danger: #dc3545;
+      --warning: #ffc107;
+      --info: #00e5ff;
+      --text: #e0e0e0;
+    }
+
+    body {
+      background: var(--primary-bg);
+      color: var(--text);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    h1, h4 {
+      background: linear-gradient(45deg, var(--accent), var(--accent-hover));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(26,26,46,0.95), rgba(15,15,30,0.85));
+      border: 1px solid rgba(156, 39, 176, 0.4);
+      border-radius: 12px;
+      color: var(--text);
+      transition: transform 0.2s;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent-hover);
+    }
+
+    .company-code-box,
+    .stock-price-box {
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+      background: rgba(26, 26, 46, 0.8);
+      box-shadow: inset 0 0 8px rgba(156, 39, 176, 0.3);
+    }
+
+    .company-code-box {
+      border: 1px solid var(--accent);
+    }
+
+    .stock-price-box {
+      border: 1px solid var(--success);
+      color: var(--success);
+    }
+
+    .btn-primary {
+      position: relative;
+      padding: 12px 18px;
+      font-size: 16px;
+      font-weight: 600;
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      color: var(--text);
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, var(--accent), var(--accent-hover));
+      border-radius: 10px;
+      z-index: -2;
+      transition: 0.4s;
+    }
+
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: var(--primary-bg);
+      border-radius: 6px;
+      z-index: -1;
+    }
+
+    .btn-primary:hover::before {
+      filter: blur(6px);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      color: var(--accent-hover);
+    }
+
+    .form-control {
+      background: #141426;
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 6px;
+    }
+
+    .form-control:focus {
+      border-color: var(--accent-hover);
+      box-shadow: 0 0 10px rgba(233, 30, 99, 0.5);
+      background: #1f1f2f;
+    }
+
+    .alert-danger {
+      background: linear-gradient(90deg, var(--danger), #7b1fa2);
+      border: none;
+      color: #fff;
+      border-radius: 8px;
+    }
+
+    .alert-info {
+      background: rgba(26, 26, 46, 0.85);
+      border-left: 5px solid var(--info);
+      color: var(--info);
+      border-radius: 8px;
+    }
+
+    table {
+      color: var(--text);
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: rgba(26, 26, 46, 0.6);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    table th, table td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    table th {
+      background: rgba(156,39,176,0.2);
+      color: var(--accent-hover);
+      font-weight: 600;
+    }
+
+    /* Floating AI Advice Button */
+    .ai-advice-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+      background: linear-gradient(45deg, var(--accent), var(--accent-hover));
+      color: white;
+      border: none;
+      padding: 14px 22px;
+      border-radius: 50px;
+      font-size: 16px;
+      font-weight: bold;
+      box-shadow: 0 6px 16px rgba(233, 30, 99, 0.4);
+      transition: transform 0.2s, box-shadow 0.3s ease;
+    }
+
+    .ai-advice-btn:hover {
+      transform: scale(1.07);
+      box-shadow: 0 0 20px var(--accent-hover);
+    }
+
+    #ai-advice-section {
+      margin-top: 50px;
+    }
+
+    #ai-advice-text {
+      white-space: pre-wrap;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    a {
+      color: var(--info);
+      transition: color 0.3s ease;
+    }
+
+    a:hover {
+      color: var(--accent-hover);
+    }
+    .badge-success { color:green !important; }
+    .badge-danger { color:white !important; }
+    .badge-warning { color:white !important; }
+
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <h1 class="mb-4 d-flex justify-content-between align-items-center">
+    {{ company }} - Stock Data
+
+
+</h1>
+
+    <div class="company-code-box">
+      <strong>Scrip Code:</strong> {{ scrip_code }}
+    </div>
+    {% if overall_sentiment %}
+    <div class="company-code-box">
+      <strong>Market Sentiment:</strong> {{ overall_sentiment }}
+    </div>
+      {% endif %}
+    <div class="stock-price-box">
+      <strong>Current Stock Price:</strong> ₹{{ price }}
+    </div>
+
+    {% if future_price %}
+      <div class="stock-price-box" style="border-color: var(--warning); color: var(--warning);">
+        <strong>Predicted Close Price (Next Month):</strong> ₹{{ future_price | round(2) }}
+      </div>
+    {% endif %}
+
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST">
+      <div class="form-group">
+        <label for="ticker">Stock Ticker :</label>
+        <input type="text" class="form-control" id="ticker" name="ticker" value="{{ scrip_code or '' }}" required>
+        <small class="form-text text-muted">Enter the BSE stock symbol (without .BSE).</small>
+      </div>
+
+      <div class="form-group">
+        <label for="start_date">Start Date (YYYY/MM/DD):</label>
+        <input type="text" class="form-control" id="start_date" name="start_date" value="{{ start_date_display }}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="end_date">End Date (YYYY/MM/DD):</label>
+        <input type="text" class="form-control" id="end_date" name="end_date" value="{{ end_date_display }}" required>
+      </div>
+
+      <div class="form-group">
+        <label for="no_month">Enter How Many Months of Stock Data You Want To Analyze:</label>
+        <select class="form-control" id="no_month" name="no_month" required>
+          {% for month in range(1, 121) %}
+            <option value="{{ month }}" {% if months == month %}selected{% endif %}>{{ month }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Get Data</button>
+    </form>
+
+    {% if fig_html %}
+      {% if return_percentage is not none %}
+        <div class="alert alert-info mt-4">
+          <strong>📊 Return Percentage:</strong>
+          <span style="color:
+            {% if return_percentage > 0 %}var(--success)
+            {% elif return_percentage < 0 %}var(--danger)
+            {% else %}var(--warning)
+            {% endif %};">
+            {{ return_percentage }}%
+          </span>
+          {% if trend %} ({{ trend | capitalize }}) {% endif %}
+        </div>
+      {% endif %}
+
+      <div class="mt-5">
+        <h4>📈 High Price Trend (Last {{ months }} Months)</h4>
+        {{ fig_html | safe }}
+      </div>
+    {% endif %}
+
+    {% if table_data %}
+      <div class="mt-5">
+        <h4>Stock Data Table</h4>
+        {{ table_data | safe }}
+      </div>
+    {% endif %}
+
+    {% if suggestion %}
+      <div class="mt-5">
+        <h4>💡 Smart Investment Insight</h4>
+        <div class="alert alert-info">{{ suggestion }}</div>
+      </div>
+    {% endif %}
+
+    <!-- AI Advice Section -->
+<div id="ai-advice-section" style="display:none;">
+  <h4>🧠 AI-Powered Investment Advice</h4>
+  <div class="alert alert-info">
+    <!-- Use a div instead of pre to support Markdown rendering -->
+    <div id="ai-advice-text"></div>
+  </div>
+</div>
+</div>
+
+<!-- Floating AI Advice Button -->
+<button class="ai-advice-btn" onclick="generateAdvice('{{ company }}')">
+  🤖 Generate AI Advice
+</button>
+
+<!-- Include a Markdown renderer like marked.js -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script>
+  function generateAdvice(company) {
+    const section = document.getElementById("ai-advice-section");
+    const text = document.getElementById("ai-advice-text");
+    section.style.display = "block";
+    text.innerHTML = "⏳ Fetching AI advice...";
+
+    fetch("/get_ai_advice", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ company: company })
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Convert Markdown → HTML for better display
+        text.innerHTML = marked.parse(data.reply);
+      })
+      .catch(err => {
+        console.error(err);
+        text.innerHTML = "⚠️ Failed to get advice.";
+      });
+  }
+</script>
+
+  <div class="container mt-5">
+    <h4>📰 Latest Financial News for {{ company }}</h4>
+    <div class="card p-3">
+      {% if headlines %}
+        <ul class="list-unstyled mb-0">
+          {% for item in headlines %}
+    <li class="mb-3">
+      <strong>{{ loop.index }}.</strong>
+
+      <!-- Sentiment Badge -->
+      <span class="badge
+        {% if item.sentiment == 'Positive' %}
+            badge-success
+        {% elif item.sentiment == 'Negative' %}
+            badge-danger
+        {% else %}
+            badge-warning
+        {% endif %}
+      " style="margin-right: 6px;">
+        {{ item.sentiment }} ({{ (item.confidence * 100) | round(1) }}%)
+      </span>
+
+      <!-- Headline Link -->
+      <a href="{{ item.link }}" target="_blank">{{ item.headline }}</a>
+    </li>
+{% endfor %}
+        </ul>
+      {% else %}
+        <p style="color: #aaa;">No news found for this company.</p>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

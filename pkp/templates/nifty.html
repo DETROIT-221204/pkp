@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <title>{{ name }} Chart</title>
+</head>
+<body style="background-color:#121212; color:white; font-family: Arial, sans-serif;">
+
+    <div class="container mt-5" style="padding: 20px;">
+        <h2 class="mb-4 text-center">{{ name }} High Price History</h2>
+
+        <!-- Current Price -->
+        <div class="text-center" style="font-size: 24px; margin-bottom: 20px;">
+            Current Price: <strong>{{ price_tag }}</strong>
+        </div>
+
+        <!-- Chart -->
+        <div style="margin-bottom: 40px;">
+            {{ fig_html|safe }}
+        </div>
+
+        <!-- Financial News Section -->
+        <div>
+            <h3 style="margin-bottom: 20px;">Latest Financial News</h3>
+            {% if headlines %}
+                <ul style="list-style-type: none; padding-left: 0;">
+                    {% for headline, link in headlines %}
+                        <li style="margin-bottom: 20px;">
+                            <div style="font-size: 18px;">🔹 {{ headline }}</div>
+                            <div>
+                                <a href="{{ link }}" target="_blank" style="color: #1E90FF; text-decoration: none;">Explore</a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No news found at the moment.</p>
+            {% endif %}
+        </div>
+    </div>
+
+</body>
+</html>

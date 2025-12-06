@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Compare Stocks</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #121212;
+            color: #eee;
+        }
+        .form-select, .input-group-text {
+            background-color: #1c1c1c;
+            color: white;
+            border-color: purple;
+        }
+        .input-group-text {
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: purple;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: violet;
+            color: black;
+        }
+        .stock-section {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid purple;
+            margin-bottom: 30px;
+        }
+        h3 {
+            color: violet;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">📊 Compare Two Stocks</h1>
+
+    <!-- 🔄 Comparison Form -->
+    <form method="get" action="/compare">
+        <div class="row justify-content-center">
+            <!-- Stock 1 -->
+            <div class="col-md-4 mb-3">
+                <label for="stock1" class="me-2 text-white-50 fw-semibold">Stock 1:</label>
+                <div class="input-group">
+                    <select class="form-select" id="stock1" name="stock1" required>
+                        <option disabled selected>Select a stock</option>
+                        {% for item in name_company %}
+                            <option value="{{ item['company'] }}" {% if request.args.get('stock1', '') == item['company'] %}selected{% endif %}>
+                                {{ item['company'] }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Stock 2 -->
+            <div class="col-md-4 mb-3">
+                <label for="stock2" class="me-2 text-white-50 fw-semibold">Stock 2:</label>
+                <div class="input-group">
+                    <select class="form-select" id="stock2" name="stock2" required>
+                        <option disabled selected>Select a stock</option>
+                        {% for item in name_company %}
+                            <option value="{{ item['company'] }}" {% if request.args.get('stock2', '') == item['company'] %}selected{% endif %}>
+                                {{ item['company'] }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Number of Months -->
+            <div class="col-md-3 mb-3">
+                <label for="months" class="me-2 text-white-50 fw-semibold">Months:</label>
+                <div class="input-group">
+                    <select class="form-select" id="months" name="months" required>
+                        {% for m in range(3, 13) %}
+                            <option value="{{ m }}" {% if request.args.get('months', '6')|int == m %}selected{% endif %}>{{ m }} months</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-primary px-4">🔁 Compare</button>
+        </div>
+    </form>
+
+    <!-- 🧾 Comparison Results -->
+    {% if stock1_data and stock2_data %}
+    <div class="row mt-5">
+        <!-- Stock 1 Info -->
+        <div class="col-md-6 stock-section">
+            <h3>{{ stock1_data.company }}</h3>
+            <p><strong>Price:</strong> ₹{{ stock1_data.price }}</p>
+            <p><strong>Return %:</strong> {{ stock1_data.return_percentage }}%</p>
+            <p><strong>Trend:</strong> {{ stock1_data.trend }}</p>
+            <p><strong>Suggestion:</strong> {{ stock1_data.suggestion }}</p>
+            <div class="my-3">
+                {{ stock1_data.fig_html | safe }}
+            </div>
+            <div>
+                {{ stock1_data.table_data | safe }}
+            </div>
+        </div>
+
+        <!-- Stock 2 Info -->
+        <div class="col-md-6 stock-section">
+            <h3>{{ stock2_data.company }}</h3>
+            <p><strong>Price:</strong> ₹{{ stock2_data.price }}</p>
+            <p><strong>Return %:</strong> {{ stock2_data.return_percentage }}%</p>
+            <p><strong>Trend:</strong> {{ stock2_data.trend }}</p>
+            <p><strong>Suggestion:</strong> {{ stock2_data.suggestion }}</p>
+            <div class="my-3">
+                {{ stock2_data.fig_html | safe }}
+            </div>
+            <div>
+                {{ stock2_data.table_data | safe }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+</body>
+</html>

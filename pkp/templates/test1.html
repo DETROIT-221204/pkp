@@ -1,0 +1,54 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>{{ stock_name }} - Stock Info</title>-->
+<!--    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">-->
+<!--    <style>-->
+<!--        table {-->
+<!--            font-size: 14px;-->
+<!--        }-->
+<!--        th, td {-->
+<!--            text-align: center;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div class="container mt-5">-->
+<!--    <h1>{{ stock_name }}</h1>-->
+<!--    <p><strong>Scrip Code:</strong> {{ scrip }}</p>-->
+
+<!--    <form method="post">-->
+<!--        <button type="submit" class="btn btn-primary">Get Data</button>-->
+<!--    </form>-->
+
+<!--    {% if data is not none and not data.empty %}-->
+<!--        <h3 class="mt-4">Stock Data (Yahoo Finance)</h3>-->
+<!--        <div class="table-responsive">-->
+<!--            <table class="table table-bordered table-striped">-->
+<!--                <thead>-->
+<!--                    <tr>-->
+<!--                        {% for col in data.columns %}-->
+<!--                            <th>{{ col }}</th>-->
+<!--                        {% endfor %}-->
+<!--                    </tr>-->
+<!--                </thead>-->
+<!--                <tbody>-->
+<!--                    {% for index, row in data.iterrows() %}-->
+<!--                        <tr>-->
+<!--                            {% for col in data.columns %}-->
+<!--                                <td>{{ row[col] }}</td>-->
+<!--                            {% endfor %}-->
+<!--                        </tr>-->
+<!--                    {% endfor %}-->
+<!--                </tbody>-->
+<!--            </table>-->
+<!--        </div>-->
+<!--    {% elif data is not none %}-->
+<!--        <div class="alert alert-warning mt-3">No data found or failed to fetch stock data.</div>-->
+<!--    {% endif %}-->
+<!--</div>-->
+<!--</body>-->
+<!--</html>-->
+
+

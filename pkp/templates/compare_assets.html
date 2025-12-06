@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">-->
+    <meta charset="UTF-8">
+    <title>Compare Assets</title>
+    <style>
+        :root {
+            --primary-bg: #0a0a1a;
+            --secondary-bg: #1a1a2e;
+            --accent: #9c27b0;
+            --accent-hover: #e91e63;
+            --text: #e0e0e0;
+        }
+
+        body {
+            background: var(--primary-bg);
+            color: var(--text);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 2rem;
+        }
+
+        h2 {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: linear-gradient(45deg, #9c27b0, #e91e63);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 0.5rem;
+}
+
+h2::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #9c27b0, #e91e63);
+    margin: 0.8rem auto 0;
+    border-radius: 2px;
+    box-shadow: 0 0 10px rgba(156, 39, 176, 0.6);
+}
+
+        /* Asset boxes */
+        .asset-box {
+            background: var(--secondary-bg);
+            border: 1px solid rgba(156, 39, 176, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .asset-box h3 {
+            color: var(--text);
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(156, 39, 176, 0.3);
+        }
+
+        /* Select dropdowns */
+        select {
+            width: 100%;
+            padding: 0.5rem 1rem;
+            background-color: var(--secondary-bg);
+            color: var(--text);
+            border: 1px solid rgba(156, 39, 176, 0.5);
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 0.25rem rgba(156, 39, 176, 0.25);
+            outline: none;
+        }
+
+        /* Buttons */
+        button {
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(45deg, #9c27b0, #e91e63);
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(156, 39, 176, 0.4);
+            background: linear-gradient(45deg, #e91e63, #9c27b0);
+        }
+
+        /* Button-style checkboxes */
+        .btn-check {
+            display: none;
+        }
+
+        .btn-label {
+            padding: 8px 18px;
+            margin: 5px;
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            cursor: pointer;
+            background: transparent;
+            color: var(--accent);
+            font-weight: 600;
+            transition: 0.3s;
+            display: inline-block;
+        }
+
+        .btn-check:checked + .btn-label {
+            background: linear-gradient(45deg, #9c27b0, #e91e63);
+            color: white;
+            border-color: var(--accent-hover);
+            box-shadow: 0 4px 10px rgba(156, 39, 176, 0.5);
+        }
+
+        /* Selected value */
+        .selected-value {
+            background: rgba(156, 39, 176, 0.1);
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            border-left: 3px solid var(--accent);
+            font-weight: bold;
+        }
+
+        /* Stock analysis section */
+        .stock-section {
+            background: rgba(26, 26, 46, 0.5);
+            border: 1px solid rgba(156, 39, 176, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            overflow-x: auto;
+        }
+
+        .stock-section h3 {
+            color: var(--accent-hover);
+            font-size: 1.5rem;
+        }
+
+        .stock-section p strong {
+            color: #00ff88;
+        }
+
+        /* Chart container */
+        .chart-container {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--primary-bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #9c27b0, #e91e63);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #e91e63, #9c27b0);
+        }
+    </style>
+</head>
+<body>
+    <h2>Select Your Assets</h2>
+    <form method="POST">
+        <!-- Button-style checkboxes -->
+        <input type="checkbox" id="stocks" class="btn-check" name="assets" value="stocks"
+            {% if 'stocks' in selected_assets %}checked{% endif %}>
+        <label for="stocks" class="btn-label">Stocks</label>
+
+        <input type="checkbox" id="real_estate" class="btn-check" name="assets" value="real_estate"
+            {% if 'real_estate' in selected_assets %}checked{% endif %}>
+        <label for="real_estate" class="btn-label">Real Estate</label>
+
+        <input type="checkbox" id="gold" class="btn-check" name="assets" value="gold"
+            {% if 'gold' in selected_assets %}checked{% endif %}>
+        <label for="gold" class="btn-label">Gold</label>
+
+        <input type="checkbox" id="crypto" class="btn-check" name="assets" value="crypto"
+            {% if 'crypto' in selected_assets %}checked{% endif %}>
+        <label for="crypto" class="btn-label">Crypto</label>
+
+        <br><br>
+
+        <!-- STOCKS BOX -->
+{% if 'stocks' in selected_assets %}
+<div class="asset-box">
+    <h3>Stocks</h3>
+
+    <!-- Company Dropdown -->
+    <label for="stock">Select Stock:</label>
+    <select name="stock" id="stock" class="form-control">
+        {% for item in name_company %}
+            <option value="{{ item['company'] }}"
+                {% if selections.get('Stock') == item['company'] %}selected{% endif %}>
+                {{ item['company'] }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <!-- Months Dropdown -->
+    <label for="no_month" class="mt-3">Enter How Many Months of Stock Data You Want To Analyze:</label>
+    <select class="form-control" id="no_month" name="no_month" required>
+        {% for month in range(1, 121) %}
+            <option value="{{ month }}" {% if months == month %}selected{% endif %}>{{ month }}</option>
+        {% endfor %}
+    </select>
+
+    <br>
+    <button type="submit" class="btn btn-primary mt-2">Select</button>
+
+    {% if selections.get('Stock') %}
+        <div class="selected-value mt-2">Selected: {{ selections['Stock'] }}</div>
+    {% endif %}
+
+    {% if stock_data %}
+    <div class="stock-section mt-4">
+        <h3>{{ stock_data.company }}</h3>
+        <p><strong>Price:</strong> ₹{{ stock_data.price }}</p>
+        <p><strong>Return %:</strong> {{ stock_data.return_percentage }}%</p>
+        <p><strong>Trend:</strong> {{ stock_data.trend }}</p>
+        <p><strong>Suggestion:</strong> {{ stock_data.suggestion }}</p>
+
+        <div class="chart-container">
+            {{ stock_data.fig_html | safe }}
+        </div>
+
+        <div class="table-responsive">
+            {{ stock_data.table_data | safe }}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+        <!-- REAL ESTATE BOX -->
+{% if 'real_estate' in selected_assets %}
+<div class="asset-box">
+    <h3>Real Estate</h3>
+    <select name="location_option">
+        {% for item in locations %}
+            <option value="{{ item }}">{{ item }}</option>
+        {% endfor %}
+    </select>
+
+    <label for="rsno_years" class="mt-3">Enter How Many Years of Real Estate Data You Want To Analyze:</label>
+    <select class="form-control" id="rsno_years" name="rsno_years" required>
+        {% for month in range(1, 21) %}
+            <option value="{{ month }}" {% if months == month %}selected{% endif %}>{{ month }}</option>
+        {% endfor %}
+    </select> <!-- ✅ Added missing closing tag -->
+
+    <br><br>
+    <button type="submit">Select</button>
+
+    {% if selections.get('Real Estate') %}
+        <div class="selected-value">Selected: {{ selections['Real Estate'] }}</div>
+    {% endif %}
+
+    {% if real_estate_graph %}
+    <div class="real-estate-section">
+        <h3>{{ selections['Real Estate'] }}</h3>
+        <p><strong>Return %:</strong> {{ real_estate_return }}%</p>
+        <p><strong>Insight:</strong> {{ real_estate_insight }}</p>
+
+        <div class="chart-container">
+            {{ real_estate_graph | safe }}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+
+
+        <!-- GOLD BOX -->
+        {% if 'gold' in selected_assets %}
+        <div class="asset-box">
+            <h3>Gold</h3>
+            <select name="gold">
+                <option value="">--Select Gold Option--</option>
+                <option value="24K" {% if selections.get('Gold')=='24K' %}selected{% endif %}>24K</option>
+                <option value="22K" {% if selections.get('Gold')=='22K' %}selected{% endif %}>22K</option>
+                <option value="18K" {% if selections.get('Gold')=='18K' %}selected{% endif %}>18K</option>
+            </select>
+            <label for="no_years" class="mt-3">Enter How Many Months of Stock Data You Want To Analyze:</label>
+               <select class="form-control" id="no_years" name="no_years" required>
+               {% for month in range(1, 21) %}
+                <option value="{{ month }}" {% if months == month %}selected{% endif %}>{{ month }}</option>
+                {% endfor %}
+    </select>
+            <br><br>
+            <button type="submit">Select</button>
+
+            {% if selections.get('Gold') %}
+                <div class="selected-value">Selected: {{ selections['Gold'] }}</div>
+            {% endif %}
+
+            {% if gold_data %}
+<div class="gold-section">
+    <h3>Gold Investment Analysis</h3>
+    <p><strong>Current Gold Price:</strong> ₹{{ gold_price }}</p>
+    {% if return_percentage %}
+        <p><strong>Return Percentage:</strong> {{ return_percentage }}%</p>
+    {% endif %}
+
+    <div class="chart-container">
+        <style>
+            .chart-container {
+                background: rgba(0, 0, 0, 0.2);
+                border-radius: 0.5rem;
+                padding: 1rem;
+                margin: 1.5rem 0;
+                width: 100%;
+                max-width: 100%;
+            }
+            .chart-container .plotly-graph-div {
+                width: 100% !important;
+                height: 100% !important;
+            }
+        </style>
+        {{ gold_price_chart | safe }}
+    </div>
+
+    <div class="table-responsive">
+        {{ gold_average | safe }}
+    </div>
+
+    {% if gold_data.investment_result %}
+        <h4>Investment Simulation</h4>
+        <p><strong>Year:</strong> {{ gold_data.investment_result.year }}</p>
+        <p><strong>Amount Invested:</strong> ₹{{ gold_data.investment_result.amount }}</p>
+        <p><strong>Grams Bought:</strong> {{ gold_data.investment_result.grams }}</p>
+        <p><strong>Current Value:</strong> ₹{{ gold_data.investment_result.current_value }}</p>
+        <p><strong>Profit:</strong> ₹{{ gold_data.investment_result.profit }}</p>
+        <p><strong>Return %:</strong> {{ gold_data.investment_result.percent_return }}%</p>
+    {% endif %}
+</div>
+{% endif %}
+
+        </div>
+        {% endif %}
+
+        <!-- CRYPTO BOX -->
+        {% if 'crypto' in selected_assets %}
+        <div class="asset-box">
+            <h3>Crypto</h3>
+            <select name="crypto">
+                <option value="">--Select Crypto--</option>
+                <option value="Bitcoin" {% if selections.get('Crypto')=='Bitcoin' %}selected{% endif %}>Bitcoin</option>
+                <option value="Ethereum" {% if selections.get('Crypto')=='Ethereum' %}selected{% endif %}>Ethereum</option>
+                <option value="Tether" {% if selections.get('Crypto')=='Tether' %}selected{% endif %}>Tether</option>
+                <option value="BNB" {% if selections.get('Crypto')=='BNB' %}selected{% endif %}>BNB</option>
+                <option value="USD Coin" {% if selections.get('Crypto')=='USD Coin' %}selected{% endif %}>USD Coin</option>
+            </select>
+            <br><br>
+            <button type="submit">Select</button>
+
+            {% if selections.get('Crypto') %}
+                <div class="selected-value">Selected: {{ selections['Crypto'] }}</div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <br><br>
+        <button type="submit">Compare Selected</button>
+    </form>
+{% if summary %}
+<div class="card mt-4">
+    <div class="card-header bg-dark text-white">
+        <h4>📊 Investment Return Summary</h4>
+    </div>
+    <div class="card-body">
+        <ul class="list-group">
+            <li class="list-group-item">
+                <strong>Gold:</strong>
+                {% if summary.Gold is not none %}
+                    {{ summary.Gold | round(2) }} %
+                {% else %}
+                    Not Selected
+                {% endif %}
+            </li>
+            <li class="list-group-item">
+                <strong>Real Estate:</strong>
+                {% if summary['Real Estate'] is not none %}
+                    {{ summary['Real Estate'] | round(2) }} %
+                {% else %}
+                    Not Selected
+                {% endif %}
+            </li>
+            <li class="list-group-item">
+                <strong>Stocks:</strong>
+                {% if summary.Stocks is not none %}
+                    {{ summary.Stocks | round(2) }} %
+                {% else %}
+                    Not Selected
+                {% endif %}
+            </li>
+        </ul>
+    </div>
+</div>
+{% endif %}
+</body>
+</html>

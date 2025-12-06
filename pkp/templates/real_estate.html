@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Real Estate Dashboard</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://kit.fontawesome.com/a2d9d6cfd3.js" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --primary-bg: #0a0a1a;
+      --secondary-bg: #1a1a2e;
+      --accent: #9c27b0;
+      --accent-hover: #e91e63;
+      --text: #e0e0e0;
+    }
+
+    body {
+      background: var(--primary-bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: rgba(26, 26, 46, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(156, 39, 176, 0.3);
+      padding: 1rem 2rem;
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.8rem;
+      background: linear-gradient(45deg, var(--accent), var(--accent-hover));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 1px;
+    }
+
+    /* Title */
+    .real-estate-title {
+      font-size: 2.4rem;
+      font-weight: 700;
+      text-align: center;
+      margin: 40px 0 20px;
+      background: linear-gradient(45deg, var(--accent), var(--accent-hover));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .real-estate-icon {
+      font-size: 3rem;
+      margin-right: 12px;
+      color: var(--accent-hover);
+    }
+
+    /* Cards */
+    .card {
+      background: linear-gradient(160deg, rgba(26,26,46,0.8), rgba(15,15,30,0.6));
+      border: 1px solid rgba(156,39,176,0.3);
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+      color: var(--text);
+      transition: all 0.3s ease-in-out;
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.02);
+      border-color: var(--accent-hover);
+      box-shadow: 0 12px 25px rgba(233, 30, 99, 0.3);
+    }
+
+    .card-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--accent-hover);
+    }
+
+    .card-text {
+      color: #bbb;
+    }
+
+    /* Gradient Glow Button */
+    .btn-glow {
+      position: relative;
+      padding: 10px 22px;
+      color: var(--text);
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      overflow: hidden;
+      cursor: pointer;
+      text-transform: uppercase;
+      background: transparent;
+      transition: all 0.3s ease;
+    }
+
+    .btn-glow::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: calc(100% + 6px);
+      height: calc(100% + 6px);
+      border-radius: 12px;
+      background: linear-gradient(45deg, var(--accent), var(--accent-hover));
+      z-index: -2;
+      transition: all 0.5s ease;
+    }
+
+    .btn-glow::after {
+      content: "";
+      position: absolute;
+      inset: 2px;
+      background: var(--primary-bg);
+      border-radius: 6px;
+      z-index: -1;
+    }
+
+    .btn-glow:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 15px rgba(233, 30, 99, 0.6);
+    }
+
+    .btn-glow:hover::before {
+      transform: rotate(180deg);
+      filter: blur(6px);
+    }
+
+    /* Floating Compare Button */
+    #compare-stocks-btn {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      z-index: 1000;
+      background: linear-gradient(45deg, var(--accent), var(--accent-hover));
+      border: none;
+      padding: 14px 28px;
+      border-radius: 40px;
+      font-weight: bold;
+      font-size: 1rem;
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4);
+      transition: all 0.3s ease-in-out;
+    }
+
+    #compare-stocks-btn:hover {
+      transform: scale(1.08);
+      background: linear-gradient(45deg, var(--accent-hover), var(--accent));
+    }
+
+  </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container">
+    <a class="navbar-brand" href="{{ url_for('home') }}" data-i18n="app_name">DhanGyan</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navItems">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navItems">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('search') }}" onclick="saveInterest('Stock')">Stock</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('gold') }}" onclick="saveInterest('Gold')">Gold</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('real_estate') }}" onclick="saveInterest('Real Estate')">Real Estate</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('mutualfunds') }}" onclick="saveInterest('Mutual Funds')">Mutual Funds</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ url_for('Assistant') }}" data-i18n="nav_ai_assistant">AI Assistant</a></li>
+        <li class="nav-item ms-lg-3 mt-2 mt-lg-0">
+          <a href="{{ url_for('compare_assets') }}" class="btn-glow" data-i18n="nav_compare"><i class="fas fa-balance-scale me-2"></i><span data-i18n="nav_compare_text">Compare</span></a>
+        </li>
+        {% if not user %}
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}" data-i18n="nav_login">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('signup') }}" data-i18n="nav_signup">Signup</a></li>
+        {% endif %}
+        <li class="nav-item d-flex align-items-center ms-3">
+          <div class="form-check form-switch text-light">
+            <input class="form-check-input" type="checkbox" id="language-toggle" onchange="toggleLanguage()">
+            <label class="form-check-label ms-2">
+              <span id="lang-en" class="active-lang"></span>
+              <span id="lang-hi">HI</span>
+            </label>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<script>
+function saveInterest(topic) {
+    fetch(`/set_interest/${topic}`, { method: "POST" })
+        .catch(err => console.error("Failed to save interest:", err));
+}
+</script>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <a class="navbar-brand" href="#"><i class="fas fa-city mr-2"></i> Real Estate Insight</a>
+  </nav>
+
+  <!-- Title -->
+  <div class="container">
+    <div class="real-estate-title">
+      <i class="fas fa-building real-estate-icon"></i> Explore Real Estate Locations
+    </div>
+
+    <!-- Cards -->
+    <div class="row">
+      {% for loc in locations %}
+      <div class="col-md-4 mb-4">
+        <div class="card p-3 h-100">
+          <div class="card-body text-center d-flex flex-column justify-content-between">
+            <h5 class="card-title"><i class="fas fa-map-marker-alt mr-2"></i>{{ loc }}</h5>
+            <p class="card-text">Discover property values, rental yields, and market insights in <strong>{{ loc }}</strong>.</p>
+            <a href="{{ url_for('rs_insight', location=loc) }}" class="btn-glow mt-2">Explore <i class="fas fa-arrow-right ml-2"></i></a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Floating Compare Button -->
+  <a href="{{url_for('rs_compare')}}">
+    <button id="compare-stocks-btn"><i class="fas fa-balance-scale mr-2"></i> Compare Real Estate</button>
+  </a>
+
+</body>
+</html>
